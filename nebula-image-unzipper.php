@@ -13,3 +13,23 @@
 if(!defined('ABSPATH')){
 	exit('Go away!');
 }
+
+add_action( 'admin_menu', 'nebula_start_image_unzip' );
+
+function nebula_start_image_unzip(){
+	add_menu_page('Upload Image Zip', 'Upload Image Zip','manage_options','nebula_upload_image_zips','nebula_upload_image_zips','dashicons-media-archive',15 );
+}
+
+function nebula_allowed_file_types($filetype){
+	$allowed_file_types = array('image/png','image/jpeg','image/jpg','image/gif');
+	if(in_array($filetype,$allowed_file_types))
+	{
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function nebula_upload_image_zips(){
+
+}
