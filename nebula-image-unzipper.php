@@ -10,14 +10,16 @@
 * License URI: https://www.gnu.org/licenses/gpl-3.0.html
 */
 
+namespace nebula\unzipper;
+
 if(!defined('ABSPATH')){
 	exit('Go away!');
 }
 
-add_action( 'admin_menu', 'nebula_start_image_unzip' );
+add_action( 'admin_menu', __NAMESPACE__.'\nebula_start_image_unzip' );
 
 function nebula_start_image_unzip(){
-	add_menu_page('Upload Image Zip', 'Upload Image Zip','manage_options','nebula_upload_image_zips','nebula_upload_image_zips','dashicons-media-archive',15 );
+	add_menu_page('Upload Image Zip', 'Upload Image Zip','manage_options','nebula_upload_image_zips',__NAMESPACE__.'\nebula_upload_image_zips','dashicons-media-archive',15 );
 }
 
 function nebula_allowed_file_types($filetype){
@@ -33,11 +35,11 @@ function nebula_allowed_file_types($filetype){
 function nebula_upload_image_zips(){
 	echo '<div class="wrap">';
 	echo '<h1>Upload An Image Zip File</h1>';
-	
+
 	if(isset($_FILES['fileToUpload'])) {
 
 		// Get the current uploads directory including the year and month.
-		$dir = "../wp-content/uploads" . wp_upload_dir()['subdir'];
+		$dir = "../wp-content/uploads" . \wp_upload_dir()['subdir'];
 
 		// Use regular PHP to upload the zip file to the uploads directory (using the $dir variable from above).
 		$target_file 	= $dir . '/' . basename($_FILES["fileToUpload"]["name"]);
@@ -45,7 +47,7 @@ function nebula_upload_image_zips(){
 		$file_name 		= basename( $_FILES["fileToUpload"]["name"]);
 
 		// Create (instantiate) a new zip utility object.
-		$zip = new ZipArchive;
+		$zip = new \ZipArchive;
 
 		// Attempt to open the zip file.
 		$res = $zip->open($target_file);
@@ -54,7 +56,7 @@ function nebula_upload_image_zips(){
 		if ($res === TRUE) {
 		  $zip->extractTo($dir);
 
-			echo "<h3 style='color:#090;'>The zip file $file_name was successfully unzipped to  " . wp_upload_dir()['url'] . ".</h3>";
+			echo "<h3 style='color:#090;'>The zip file $file_name was successfully unzipped to  " . \wp_upload_dir()['url'] . ".</h3>";
 
 			// Display a message with the number of media files in the zip file.
 			echo "There are ".$zip->numFiles." files in this zip file. <br/>";
@@ -63,10 +65,10 @@ function nebula_upload_image_zips(){
 			for($i=0; $i < $zip->numFiles; $i++) {
 
 				// Get the URL of the media file.
-				$media_file_name = wp_upload_dir()['url'] . '/' . $zip->getNameIndex($i);
+				$media_file_name = \wp_upload_dir()['url'] . '/' . $zip->getNameIndex($i);
 
 				// Get the file type of the media file.
-				$filetype 	= wp_check_filetype( basename( $media_file_name ), null );
+				$filetype 	= \wp_check_filetype( basename( $media_file_name ), null );
 				$allowed 	= nebula_allowed_file_types($filetype['type']);
 
 				if($allowed) {
@@ -83,11 +85,11 @@ function nebula_upload_image_zips(){
 					);
 
 					// Insert the attachment.
-					$attach_id = wp_insert_attachment( $attachment, $dir . '/' . $zip->getNameIndex($i) );
+					$attach_id = \wp_insert_attachment( $attachment, $dir . '/' . $zip->getNameIndex($i) );
 
 					// Generate the metadata for the attachment.
-					$attach_data = wp_generate_attachment_metadata( $attach_id, $dir . '/' . $zip->getNameIndex($i ));
-					wp_update_attachment_metadata( $attach_id, $attach_data );
+					$attach_data = \wp_generate_attachment_metadata( $attach_id, $dir . '/' . $zip->getNameIndex($i ));
+					\wp_update_attachment_metadata( $attach_id, $attach_data );
 				} else {
 					echo $zip->getNameIndex($i) . ' could not be uploaded. Its file type of ' . $filetype['type'] . ' is not allowed.<br/>' ;
 				}
