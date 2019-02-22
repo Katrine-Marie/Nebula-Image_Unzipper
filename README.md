@@ -1,3 +1,3 @@
 # Nebula-Image_Unzipper
 
-A Wordpress plugin that lets you upload zip files with images that are automatically unzipped and added to the Media Library.
+A Wordpress plugin that lets you upload image zip files, automatically unzips them and adds the image files to the Media Library.
